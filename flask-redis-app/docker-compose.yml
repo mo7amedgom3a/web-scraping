@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  redis:
+    image: "redis:6.2"
+    container_name: redis
+    networks:
+      - flask_redis_network
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  flask:
+    build: ./app
+    container_name: flask-app
+    networks:
+      - flask_redis_network
+    ports:
+      - "5000:5000"
+    depends_on:
+      - redis
+    volumes:
+      - ./logs:/logs
+
+networks:
+  flask_redis_network:
+    driver: bridge
+
+volumes:
+  redis_data:
+    driver: local
